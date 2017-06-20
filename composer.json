@@ -20,7 +20,10 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/grandstream.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
