@@ -10,10 +10,9 @@ Changing the username and password of cdrapi requires changes in update_recordfi
 
 /*
 Testing function shouldn't be run before modification to 3 main function at the bottom of this function
-1) Create current session log file
-2) Retreive all the recordfile's name from the grandstream
-3) Update the mapping of each phone number to their latest deal
-4) Post recordfile to pipedrive
+1) Retreive all the recordfile's name from the grandstream
+2) Update the mapping of each phone number to their latest deal
+3) Post recordfile to pipedrive
 */
 function entry() {
     /*
@@ -295,10 +294,11 @@ function post_content($log_file, $deal_id, $operator_nr, $customer_nr, $filename
         }
     }
 
-    /* Testing certain operator extension */
+    /* Testing certain operator extension
     if ($operator_nr != "1034" and $operator_nr != "1007") {
         return false;
     }
+    */
 
     $person_info = get_person_info($deal_id);
     $person_id = $person_info["person_id"];
@@ -316,10 +316,11 @@ function post_content($log_file, $deal_id, $operator_nr, $customer_nr, $filename
 
     $calltime = extract_calltime($filename);
 
+    /* gogoprintoffice.ddns.net or 10.110.10.20 */
     $content = "<ul>".
                     "<li>Phone number: $customer_nr</li>".
                     "<li>Call Time: $calltime</li>".
-                    "<li><a href=\"https://$username:$password@10.110.10.20:8443/recapi?filename=$filename\">Download</a></li>";
+                    "<li><a href=\"https://$username:$password@gogoprintoffice.ddns.net:8443/recapi?filename=$filename\">Download</a></li>";
 
     $log = "";
     /* post using pipedrive id of the operator */
@@ -327,8 +328,12 @@ function post_content($log_file, $deal_id, $operator_nr, $customer_nr, $filename
         $query_array["user_id"] = $detail->pipedrive_id;
         $log .= "Posted $filename by operator: $operator_nr with person number: $customer_nr and person id: $person_id and org id: $org_id";
     } else {
+        /*
         $content .= "<li>Unknown Extension: $operator_nr</li>";
         $log .= "Operator ($operator_nr) not found for $filename posted with person number: $customer_nr and person id: $person_id and org id: $org_id";
+        */
+        file_put_contents($log_file, "Didn't add unknown operator: $operator_nr with filename: $filename to person id: $person_id\r\n", FILE_APPEND);
+        return false;
     }
     $content .= "</ul>";
     $query_array["note"] = $content;
@@ -356,7 +361,7 @@ function post_content($log_file, $deal_id, $operator_nr, $customer_nr, $filename
         file_put_contents($log_file, $log, FILE_APPEND);
         return true;
     } else {
-        file_put_contents($log_file, "ERROR adding file $filename to pipedrive with operator $operator_nr and person number $customer_nr\r\n", FILE_APPEND);
+        file_put_contents($log_file, "ERROR adding file $filename to pipedrive with operator $operator_nr , will add later\r\n", FILE_APPEND);
         return false;
     }
 }

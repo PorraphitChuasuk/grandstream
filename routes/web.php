@@ -5,7 +5,6 @@ Route::get('/', function () {
 });
 
 Route::post('/', function() {
-    #App\recordingfile::truncate();
     #entry();
     return redirect('/');
 });
