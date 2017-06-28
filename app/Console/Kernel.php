@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
         $schedule->call(function() {
             entry();
-        })->hourlyAt(30)->between('04:00', '23:00');
+        })->hourlyAt(5)->between('04:00', '23:00');
         /*
         $schedule->call(function() {
             cron_update_grandstream_recordfiles();
