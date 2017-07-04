@@ -21,3 +21,8 @@ function create_file($name = "") {
     chmod($log_file, 0666);
     return $log_file;
 }
+
+
+function get_post_pipedrive_log_filename() {
+    return "Posting Recordfile Pipedrive";
+}

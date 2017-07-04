@@ -1,36 +1,34 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-    </head>
-    <body>
+@extends('base')
+
+@section('body')
+<div class="row justify-content-center">
+    <div class="col-sm-6">
+        <h1 class="text-center" style="margin:40px;">Adding New Sales Person</h1>
+        @include('errors')
         <form action="/user/add" method="post">
             {{ csrf_field() }}
-            <table>
-                <tbody>
-                    <tr>
-                        <td><label for="extension">Extension:</label></td>
-                        <td><input type="number" name="extension_nr" required></td>
-                    </tr>
-                    <tr>
-                        <td><label for="name">Name:</label></td>
-                        <td><input type="text" name="name" required></td>
-                    </tr>
-                    <tr>
-                        <td><label for="pipedrive">Pipedrive id:</label></td>
-                        <td><input type="number" name="pipedrive_id" required></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="submit">Submit</button>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="extension_nr">Extension:</label>
+                <input class="form-control col-sm-8" type="number" name="extension_nr" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="name">Name:</label>
+                <input class="form-control col-sm-8" type="text" name="name" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="pipedrive_id">Pipedrive Id:</label>
+                <input class="form-control col-sm-8" type="number" name="pipedrive_id" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="country_code_id">Pipedrive Country:</label>
+                <select class="form-control col-sm-8" name="country_code_id" required>
+                    @foreach($countries as $country)
+                    <option value="{{ $country->id }}">{{ \App\country_code::get_country_name($country->id) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="sumbit" class="btn btn-info">Submit</button>
         </form>
-        @if (count($errors) > 0)
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        @endif
-    </body>
-</html>
+    </div>
+</div>
+@endsection

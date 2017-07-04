@@ -1,36 +1,52 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-    </head>
-    <body>
-        <form action="/user/{{ $user->id }}/edit" method="post">
+@extends('base')
+
+@section('body')
+<div class="row justify-content-center">
+    <div class="col-sm-6">
+        <h1 class="text-center" style="margin:40px;">Editing Sales Person</h1>
+        @include('errors')
+        <form action="/user/{{ $user->id }}/edit" method="post" style="margin-bottom:20px;">
             {{ csrf_field() }}
-            <table>
-                <tbody>
-                    <tr>
-                        <td><label for="extension">Extension:</label></td>
-                        <td><input type="number" name="extension_nr" required value="{{ $user->extension_nr }}"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="name">Name:</label></td>
-                        <td><input type="text" name="name" required value="{{ $user->name }}"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="pipedrive">Pipedrive id:</label></td>
-                        <td><input type="number" name="pipedrive_id" required value="{{ $user->pipedrive_id }}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="submit">Edit</button>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="extension_nr">Extension:</label>
+                <input class="form-control col-sm-8" type="number" name="extension_nr" value="{{ $user->extension_nr }}" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="name">Name:</label>
+                <input class="form-control col-sm-8" type="text" name="name" value="{{ $user->name }}" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="pipedrive_id">Pipedrive Id:</label>
+                <input class="form-control col-sm-8" type="number" name="pipedrive_id" value="{{ $user->pipedrive_id }}" required>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="country_code_id">Pipedrive Country:</label>
+                <select class="form-control col-sm-8" name="country_code_id" required>
+                    @foreach($countries as $country)
+                    <option value="{{ $country->id }}"
+                        @if($user->country_code_id == $country->id)
+                            selected
+                        @endif
+                        >
+                        {{ \App\country_code::get_country_name($country->id) }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-check row">
+                <label class="col-sm-4 col-form-label" for="is_enable">Activated</label>
+                <input type="checkbox" name="is_enable" value="1"
+                @if($user->is_enable)
+                checked
+                @endif
+                >
+            </div>
+            <button type="sumbit" class="btn btn-info">Submit</button>
         </form>
-        @if (count($errors) > 0)
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        @endif
-    </body>
-</html>
+        <form action="/user/{{ $user->id }}/delete" method="post">
+            {{ csrf_field() }}
+            <button type="submit" class="btn btn-danger">Delete User</button>
+        </form>
+    </div>
+</div>
+@endsection

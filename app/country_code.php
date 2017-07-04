@@ -15,4 +15,12 @@ class country_code extends Model
         }
         return null;
     }
+
+    public static function get_country_name($country_id) {
+        $data = self::where('id', $country_id)->first();
+        if ($data != null) {
+            return ucwords($data->country_code);
+        }
+        return null;
+    }
 }

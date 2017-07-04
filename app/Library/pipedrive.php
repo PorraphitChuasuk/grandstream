@@ -25,7 +25,7 @@ class Pipedrive {
 
         $country_code_id = \App\country_code::get_country_id($country);
 
-        $log_file = create_file('Posting Recordfile Pipedrive '.$country);
+        $log_file = create_file(get_post_pipedrive_log_filename()." ".ucwords($country));
 
         $current_date = date_create();
         date_sub($current_date, date_interval_create_from_date_string('14 days'));
@@ -162,7 +162,7 @@ class Pipedrive {
 
         $country_code_id = \App\country_code::get_country_id($country);
 
-        $log_file = create_file('Mapping Pipedrive Phone '.$country);
+        $log_file = create_file('Mapping Pipedrive Phone '.ucwords($country));
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
