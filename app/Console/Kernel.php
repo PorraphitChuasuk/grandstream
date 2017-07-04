@@ -26,26 +26,22 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        $schedule->call(function() {
-            entry();
-        })->hourlyAt(5)->between('04:00', '23:00');
-        /*
-        $schedule->call(function() {
-            cron_update_grandstream_recordfiles();
-        })->hourlyAt(20)->between('04:00', '23:00');
+
 
         $schedule->call(function() {
-            cron_update_mapping_pipedrive();
-        })->hourlyAt(25)->between('04:00', '23:00');
+            ini_set('max_execution_time', 300);
 
-        $schedule->call(function() {
-            cron_post_pipedrive();
-        })->hourlyAt(30)->between('04:00', '23:00');
+            $grandstream = new \App\Library\Grandstream;
+            $grandstream->add_recordfile();
 
-        $schedule->call(function() {
-            cron_reset_mapping_table();
-        })->dailyAt('01:00');
-        */
+            $pipedrive = new \App\Library\Pipedrive;
+            $pipedrive->update_deal(\App\Library\Pipedrive::THAILAND);
+            $pipedrive->update_deal(\App\Library\Pipedrive::SINGAPORE);
+
+            $pipedrive->post_recording_file(\App\Library\Pipedrive::THAILAND);
+
+        })->hourlyAt(10)->between('04:00', '23:00');
+
     }
 
     /**

@@ -5,10 +5,11 @@ Route::get('/', function () {
 });
 
 Route::post('/', function() {
-    #entry();
+    dd(555);
     return redirect('/');
 });
 
+/*
 Route::get('/user', 'extensionController@index');
 
 Route::get('/user/add', 'extensionController@create');
@@ -22,3 +23,4 @@ Route::get('/user/{id}/edit', 'extensionController@edit_view');
 Route::post('/user/{id}/edit', 'extensionController@edit');
 
 Route::get('/user/log', 'extensionController@log');
+*/
