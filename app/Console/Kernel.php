@@ -41,7 +41,9 @@ class Kernel extends ConsoleKernel
             $pipedrive->post_recording_file(\App\Library\Pipedrive::THAILAND);
             $pipedrive->post_recording_file(\App\Library\Pipedrive::SINGAPORE);
 
-        })->hourlyAt(10)->between('04:00', '23:00');
+            finished();
+
+        })->hourlyAt(10)->between('06:00', '20:00');
 
     }
 

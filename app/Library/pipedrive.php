@@ -182,6 +182,10 @@ class Pipedrive {
                 $offset = $output["additional_data"]["pagination"]["next_start"];
             }
 
+            if ($output["data"] == null) {
+                log_to_file(get_error_log(), "[$country] Offset is off $offset");
+            }
+
             foreach($output["data"] as $deal) {
                 if ($deal['person_id'] == null) continue;
                 foreach($deal["person_id"]["phone"] as $phone) {

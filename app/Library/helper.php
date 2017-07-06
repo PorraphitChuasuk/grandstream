@@ -28,6 +28,15 @@ function get_post_pipedrive_log_filename() {
 }
 
 
+function get_error_log() {
+    return base_path()."/storage/logs/my_errors.log";
+}
+
+
+function finished() {
+    $temp = create_file("FINISHED");
+}
+
 /*
 Relies on log File and the line that contain "Posted"
 For ex: [2017-07-05 18:11:59] [thailand] Posted auto-1499250085-1010-8053705444.wav by operator: 1010 with person number: 053705444 and person id: 36831 and org id: 33120 and deal id: 54150
