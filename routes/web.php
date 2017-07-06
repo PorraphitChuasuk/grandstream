@@ -16,6 +16,6 @@ Route::get('/user/{id}/edit', 'extensionController@edit_view');
 
 Route::post('/user/{id}/edit', 'extensionController@edit');
 
-/*
-Route::get('/user/log', 'extensionController@log');
-*/
+Route::get('/test', function() {
+    return 'test';
+});

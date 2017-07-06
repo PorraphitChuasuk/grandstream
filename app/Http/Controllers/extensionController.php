@@ -9,7 +9,8 @@ class extensionController extends Controller
 {
     public function index(Request $request) {
         $users = \App\extension::all();
-        return view('user-index', compact('users'));
+        $user_call_count = get_pushed_count();
+        return view('user-index', compact('users', 'user_call_count'));
     }
 
 
@@ -93,29 +94,4 @@ class extensionController extends Controller
         $user->delete();
         return redirect('/user');
     }
-
-    /* Obsolete Maybe
-    public function log(Request $request) {
-        $date = \Carbon\Carbon::now('Asia/Bangkok')->format('Y-m-d');
-        $dir = '/var/www/grandstream/storage/logs/cron/'.$date;
-        $logs = array();
-        if(is_dir($dir)) {
-            $files = scandir($dir);
-            $logs_all = "";
-            foreach($files as $file) {
-                if (strpos($file, $date) !== false and strpos($file, 'cron-post-pipedrive') !== false) {
-                    $logs_all .= file_get_contents("$dir/$file");
-                }
-            }
-            $logs_all = explode("\r\n", $logs_all);
-            foreach($logs_all as $log) {
-                if (strpos($log, "not on pipedrive") !== false or strpos($log, "internal") !== false) {
-                    continue;
-                }
-                $logs[] = $log;
-            }
-        }
-        return view('user-log', compact('logs'));
-    }
-    */
 }

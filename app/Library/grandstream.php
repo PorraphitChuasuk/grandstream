@@ -15,7 +15,6 @@ class Grandstream {
     private $port = '8443';
     private $extension_length = 4; // Length of extension must be lesser than 7
     private $ring_group = '6'; // The first number of the extension of ring group
-    private $extensions = array('1', '2'); // Array of first number of the extension of SIP (Operator)
 
     public function add_recordfile() {
         $url = 'https://'.$this->internal_ip.':'.$this->port.'/recapi?filedir='.$this->files_dir;
@@ -145,17 +144,17 @@ class Grandstream {
         $result = array();
         if (array_key_exists("main_cdr", $cdr)) {
             /* Not accepting ring group as callee */
-            if ($cdr["main_cdr"]["dstanswer"] != "" and in_array($cdr["main_cdr"]["dstanswer"][0], $this->extensions)) {
+            if ($cdr["main_cdr"]["dstanswer"] != "" and $cdr["main_cdr"]["dstanswer"][0] != $this->ring_group) {
                 $result[] = $cdr["main_cdr"]["dstanswer"];
             }
             $cdr_count = count($cdr);
             for ($i = 1;$i <= $cdr_count - 2;$i++) {
-                if ($cdr["sub_cdr_$i"]["dstanswer"] != "" and in_array($cdr["sub_cdr_$i"]["dstanswer"][0], $this->extensions)) {
+                if ($cdr["sub_cdr_$i"]["dstanswer"] != "" and $cdr["sub_cdr_$i"]["dstanswer"][0] != $this->ring_group) {
                     $result[] = $cdr["sub_cdr_$i"]["dstanswer"];
                 }
             }
         } else {
-            if ($cdr["dstanswer"] != "" and in_array($cdr["dstanswer"][0], $this->extensions)) {
+            if ($cdr["dstanswer"] != "" and $cdr["dstanswer"][0] != $this->ring_group) {
                 $result[] = $cdr["dstanswer"];
             }
         }

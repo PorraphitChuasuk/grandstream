@@ -26,3 +26,32 @@ function create_file($name = "") {
 function get_post_pipedrive_log_filename() {
     return "Posting Recordfile Pipedrive";
 }
+
+
+/*
+Relies on log File and the line that contain "Posted"
+For ex: [2017-07-05 18:11:59] [thailand] Posted auto-1499250085-1010-8053705444.wav by operator: 1010 with person number: 053705444 and person id: 36831 and org id: 33120 and deal id: 54150
+*/
+function get_pushed_count() {
+    $day = Carbon::now('Asia/Bangkok')->format('Y-m-d');
+    $log_folder = base_path().'/storage/logs/cron/'.$day;
+    $result = [];
+    if (is_dir($log_folder)) {
+        $files = scandir($log_folder);
+        foreach($files as $file) {
+            if(strpos($file, get_post_pipedrive_log_filename()) !== false) {
+                $lines = explode("\r\n", file_get_contents($log_folder.'/'.$file));
+                foreach($lines as $line) {
+                    if(strpos($line, "Posted") !== false) {
+                        $operator_nr = explode(" ", $line)[7];
+                        if(!isset($result[$operator_nr])) {
+                            $result[$operator_nr] = 0;
+                        }
+                        $result[$operator_nr] += 1;
+                    }
+                }
+            }
+        }
+    }
+    return $result;
+}

@@ -23,6 +23,7 @@
             <th class="text-center">Pipedrive Id</th>
             <th class="text-center">Pipedrive Account</th>
             <th class="text-center">Activated</th>
+            <th class="text-center">Today's Call</th>
             <th class="text-center">Edit</th>
         </tr>
     </thead>
@@ -37,6 +38,11 @@
             <td>&#10003;</td>
             @else
             <td>&#10060;</td>
+            @endif
+            @if(isset($user_call_count[$user->extension_nr]))
+            <td>{{ $user_call_count[$user->extension_nr] }}</td>
+            @else
+            <td>0</td>
             @endif
             <td><a class="btn btn-info" href="/user/{{ $user->id }}/edit">Edit</a></td>
         </tr>

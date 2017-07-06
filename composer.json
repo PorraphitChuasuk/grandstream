@@ -22,7 +22,6 @@
             "App\\": "app/"
         },
         "files": [
-            "app/grandstream.php",
             "app/Library/grandstream.php",
             "app/Library/pipedrive.php",
             "app/Library/helper.php"

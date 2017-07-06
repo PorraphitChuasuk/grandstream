@@ -34,13 +34,16 @@
                 </select>
             </div>
             <div class="form-check row">
-                <label class="col-sm-4 col-form-label" for="is_enable">Activated</label>
+                <label class="col-sm-4 col-form-label" for="is_enable">Activated:</label>
                 <input type="checkbox" name="is_enable" value="1"
                 @if($user->is_enable)
                 checked
                 @endif
                 >
             </div>
+            <p>
+                <em>NOTE: Once activated after being deactivated, all the calls happening during the deactivated period will be pushed.</em>
+            </p>
             <button type="sumbit" class="btn btn-info">Submit</button>
         </form>
         <form action="/user/{{ $user->id }}/delete" method="post">
