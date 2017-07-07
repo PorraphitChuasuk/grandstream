@@ -81,7 +81,7 @@ class Pipedrive {
         $content =  "<ul>";
         $content .= "   <li>Phone number: ".$customer_nr."</li>";
         $content .= "   <li>Call Time: ".$file_info["time"]."</li>";
-        $content .= "   <li><a href=\"".$this->grandstream->get_download_url($filename)."\">Download</a></li>";
+        $content .= "   <li><a href=\"".$this->grandstream->get_download_url($filename)."\" target=\"_blank\">Download</a></li>";
         $content .= "</ul>";
 
         $deal_info = $this->_get_deal_info($deal_id, $token);
@@ -182,8 +182,15 @@ class Pipedrive {
                 $offset = $output["additional_data"]["pagination"]["next_start"];
             }
 
+            /* In case deal gets deleted in pipedrive */
             if ($output["data"] == null) {
-                log_to_file(get_error_log(), "[$country] Offset is off $offset");
+                $new_offset = 0;
+                if ($offset >= 5000) {
+                    $new_offset = $offset - 5000;
+                }
+                \App\offset_config::set_offset('pipedrive', $country, $new_offset);
+                log_to_file(get_error_log(), "[$country] Pipedrive Offset is off $offset setting to $new_offset");
+                return;
             }
 
             foreach($output["data"] as $deal) {
