@@ -17,5 +17,5 @@ Route::get('/user/{id}/edit', 'extensionController@edit_view');
 Route::post('/user/{id}/edit', 'extensionController@edit');
 
 Route::get('/test', function() {
-    return 'test';
+    return 'DONE';
 });

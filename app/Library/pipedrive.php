@@ -248,6 +248,9 @@ class Pipedrive {
         if($firsttwo == "02" || $firsttwo == "03" || $firsttwo == "04" || $firsttwo == "05" || $firsttwo == "07") {
             $phone_nr = substr($phone_nr,0,9);
         }
+
+        $phone_nr = $this->remove_extra_leading_zero($phone_nr);
+
         return $phone_nr;
     }
 
@@ -259,6 +262,23 @@ class Pipedrive {
 
     private function _remove_character($phone_nr) {
         return preg_replace("/[^0-9]/", "", $phone_nr);
+    }
+
+
+    private function remove_extra_leading_zero($phone_nr) {
+        $leading_zero_nums = 0;
+
+        $phone_nr_count = strlen($phone_nr);
+        for($i = 0;$i < $phone_nr_count;$i++) {
+            if ($phone_nr[$i] != '0') {
+                break;
+            }
+            $leading_zero_nums++;
+        }
+        if ($leading_zero_nums > 1) {
+            $phone_nr = substr($phone_nr, $leading_zero_nums - 1);
+        }
+        return $phone_nr;
     }
 
 

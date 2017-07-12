@@ -33,9 +33,10 @@ function get_error_log() {
 }
 
 
-function finished() {
-    $temp = create_file("FINISHED");
+function finished($text) {
+    $temp = create_file("FINISHED ".$text);
 }
+
 
 /*
 Relies on log File and the line that contain "Posted"

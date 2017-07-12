@@ -66,7 +66,7 @@ return [
             'schema' => 'public',
             'sslmode' => 'prefer',
         ],
-
+        /*
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST', 'localhost'),
@@ -74,6 +74,17 @@ return [
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+        ],
+        */
+        'sqlsrv' => [
+            'driver' => 'sqlsrv',
+            'host' => 'ggp-grandstream-server.database.windows.net',
+            'port' => '1433',
+            'database' => 'ggp-grandstream-th',
+            'username' => 'alexs@ggp-grandstream-server',
+            'password' => 'mAxA5WSn9yqjb2ZH',
             'charset' => 'utf8',
             'prefix' => '',
         ],

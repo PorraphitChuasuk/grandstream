@@ -10,7 +10,7 @@ class Grandstream {
     private $api_username = 'cdrapi';
     private $api_password = 'cdrapi123';
     private $files_dir = 'monitor';
-    private $internal_ip = '10.110.10.20';
+    private $internal_ip = '10.110.100.20';
     private $external_ip = 'gogoprintoffice.ddns.net';
     private $port = '8443';
     private $extension_length = 4; // Length of extension must be lesser than 7
@@ -159,5 +159,102 @@ class Grandstream {
             }
         }
         return $result;
+    }
+
+    public function update_cdr() {
+        $url = 'https://'.$this->internal_ip.':'.$this->port.'/cdrapi?format=JSON&numrecords=1000&offset=';
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->api_username.':'.$this->api_password);
+
+        $offset = 0;
+        $log_file = create_file('Update CDR Table');
+
+        while (true) {
+            curl_setopt($ch, CURLOPT_URL, $url.$offset);
+
+            $output = curl_exec($ch);
+            $output = json_decode($output, true);
+
+            if (count($output["cdr_root"]) == 0) {
+                break;
+            }
+
+            foreach($output["cdr_root"] as $val) {
+                /* This info isn't available within main_cdr and sub_cdr */
+                $cdr = $val["cdr"];
+                /* Check if it has sub cdr */
+                if (array_key_exists("main_cdr", $val)) {
+                    $this->_update_cdr_table($cdr, $val["main_cdr"], $log_file);
+                    /* Looping through all sub cdr */
+                    $cdr_count = count($val);
+                    for ($i = 1;$i <= $cdr_count - 2;$i++) {
+                        $this->_update_cdr_table($cdr, $val["sub_cdr_$i"], $log_file);
+                    }
+                } else {
+                    $this->_update_cdr_table($cdr, $val, $log_file);
+                }
+            }
+            log_to_file($log_file, "Currently at $offset");
+            $offset += 1000;
+        }
+        curl_close($ch);
+    }
+
+    private function _update_cdr_table($cdr, $record, $log_file) {
+        $data = [
+            'cdr' => $cdr,
+            'accountcode' => $record['accountcode'],
+            'src' => $record['src'],
+            'dst' => $record['dst'],
+            'dcontext' => $record['dcontext'],
+            'clid' => $record['clid'],
+            'channel' => $record['channel'],
+            'dstchannel' => $record['dstchannel'],
+            'lastapp' => $record['lastapp'],
+            'lastdata' => $record['lastdata'],
+            'start' => $record['start'],
+            'answer' => $record['answer'],
+            'end' => $record['end'],
+            'duration' => $record['duration'],
+            'billsec' => $record['billsec'],
+            'disposition' => $record['disposition'],
+            'amaflags' => $record['amaflags'],
+            'uniqueid' => $record['uniqueid'],
+            'userfield' => $record['userfield'],
+            'channel_ext' => $record['channel_ext'],
+            'dstchannel_ext' => $record['dstchannel_ext'],
+            'service' => $record['service'],
+            'caller_name' => $record['caller_name'],
+            'recordfiles' => $record['recordfiles'],
+            'dstanswer' => $record['dstanswer'],
+            'chanext' => $record['chanext'],
+            'dstchanext' => $record['dstchanext'],
+            'action_owner' => $record['action_owner'],
+            'action_type' => $record['action_type'],
+            'src_trunk_name' => $record['src_trunk_name'],
+            'dst_trunk_name' => $record['dst_trunk_name']
+        ];
+
+        $state = \App\local_cdr::firstOrCreate(
+            [
+                'acctid' => $record['AcctId'],
+                'session' => $record['session']
+            ],
+                $data
+        );
+
+        if ($state->wasRecentlyCreated) {
+            $data['acctid'] = $record['AcctId'];
+            $data['session'] = $record['session'];
+            /* Create at Remote Database */
+            \App\cdr::create($data);
+            log_to_file($log_file,
+            'Added New Record -> acctid: '.$record['AcctId'].' session: '.$record['session']);
+        }
     }
 }
