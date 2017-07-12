@@ -27,6 +27,17 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
+        $schedule->call(function() {
+            ini_set('max_execution_time', 300);
+
+            $pipedrive = new \App\Library\Pipedrive;
+            $pipedrive->update_deal(\App\Library\Pipedrive::THAILAND, 0);
+            $pipedrive->update_deal(\App\Library\Pipedrive::SINGAPORE, 0);
+
+            finished('RESETTING DEAL TABLE');
+
+        })->dailyAt('01:00');
+
 
         $schedule->call(function() {
             ini_set('max_execution_time', 300);
@@ -41,9 +52,20 @@ class Kernel extends ConsoleKernel
             $pipedrive->post_recording_file(\App\Library\Pipedrive::THAILAND);
             $pipedrive->post_recording_file(\App\Library\Pipedrive::SINGAPORE);
 
-            finished();
+            finished('PUSHING CALLS');
 
-        })->hourlyAt(10)->between('06:00', '20:00');
+        })->hourlyAt(30)->between('06:00', '20:00');
+
+
+        $schedule->call(function() {
+            ini_set('max_execution_time', 300);
+
+            $grandstream = new \App\Library\Grandstream;
+            $grandstream->update_cdr();
+
+            finished('UPDATING CDR TABLE');
+
+        })->hourlyAt(10);
 
     }
 
