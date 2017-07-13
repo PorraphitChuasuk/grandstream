@@ -33,6 +33,7 @@ function get_error_log() {
 }
 
 
+/* A simple function to indicate ending of cron job */
 function finished($text) {
     $temp = create_file("FINISHED ".$text);
 }

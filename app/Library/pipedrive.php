@@ -153,12 +153,12 @@ class Pipedrive {
     }
 
 
-    public function update_deal($country, $offset=null) {
+    public function update_deal($country) {
         $token = $this->_get_token($country);
         if ($token == null) return;
 
         /* Note: Make sure that the offset is set first in the database before calling the get_offset */
-        if ($offset == null) $offset = \App\offset_config::get_offset('pipedrive', $country);
+        $offset = \App\offset_config::get_offset('pipedrive', $country);
 
         $country_code_id = \App\country_code::get_country_id($country);
 

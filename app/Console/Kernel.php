@@ -30,14 +30,17 @@ class Kernel extends ConsoleKernel
         $schedule->call(function() {
             ini_set('max_execution_time', 300);
 
+            \App\deal::truncate();
+            \App\offset_config::set_offset('pipedrive', \App\Library\Pipedrive::THAILAND, 0);
+            \App\offset_config::set_offset('pipedrive', \App\Library\Pipedrive::SINGAPORE, 0);
+
             $pipedrive = new \App\Library\Pipedrive;
-            $pipedrive->update_deal(\App\Library\Pipedrive::THAILAND, 0);
-            $pipedrive->update_deal(\App\Library\Pipedrive::SINGAPORE, 0);
+            $pipedrive->update_deal(\App\Library\Pipedrive::THAILAND);
+            $pipedrive->update_deal(\App\Library\Pipedrive::SINGAPORE);
 
             finished('RESETTING DEAL TABLE');
 
         })->dailyAt('01:00');
-        */
 
         $schedule->call(function() {
             ini_set('max_execution_time', 300);
@@ -65,7 +68,7 @@ class Kernel extends ConsoleKernel
             finished('UPDATING CDR TABLE');
 
         })->hourlyAt(10)->between('06:00', '20:00');
-
+        */
     }
 
     /**
