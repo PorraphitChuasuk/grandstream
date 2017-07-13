@@ -184,22 +184,26 @@ class Grandstream {
                 break;
             }
 
+            log_to_file($log_file, "Currently at $offset");
+
             foreach($output["cdr_root"] as $val) {
                 /* This info isn't available within main_cdr and sub_cdr */
                 $cdr = $val["cdr"];
                 /* Check if it has sub cdr */
                 if (array_key_exists("main_cdr", $val)) {
-                    $this->_update_cdr_table($cdr, $val["main_cdr"], $log_file);
+                    $status = $this->_update_cdr_table($cdr, $val["main_cdr"], $log_file);
+                    if ($status == false) return;
                     /* Looping through all sub cdr */
                     $cdr_count = count($val);
                     for ($i = 1;$i <= $cdr_count - 2;$i++) {
-                        $this->_update_cdr_table($cdr, $val["sub_cdr_$i"], $log_file);
+                        $status = $this->_update_cdr_table($cdr, $val["sub_cdr_$i"], $log_file);
+                        if ($status == false) return;
                     }
                 } else {
-                    $this->_update_cdr_table($cdr, $val, $log_file);
+                    $status = $this->_update_cdr_table($cdr, $val, $log_file);
+                    if ($status == false) return;
                 }
             }
-            log_to_file($log_file, "Currently at $offset");
             $offset += 1000;
         }
         curl_close($ch);
@@ -251,10 +255,21 @@ class Grandstream {
         if ($state->wasRecentlyCreated) {
             $data['acctid'] = $record['AcctId'];
             $data['session'] = $record['session'];
-            /* Create at Remote Database */
-            \App\cdr::create($data);
+            try {
+                /* Create at Remote Database */
+                \App\cdr::create($data);
+            } catch (PDOException $e) {
+                // Sometimes Can't Connect?
+                \App\local_cdr::where([
+                    ['acctid', '=', $record['Acctid']],
+                    ['session', '=', $record['session']]
+                ])->delete();
+                log_to_file(get_error_log(), 'Remote SQL SERVER Database '.$e->getMessage());
+                return false;
+            }
             log_to_file($log_file,
             'Added New Record -> acctid: '.$record['AcctId'].' session: '.$record['session']);
         }
+        return true;
     }
 }

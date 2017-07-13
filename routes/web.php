@@ -17,5 +17,7 @@ Route::get('/user/{id}/edit', 'extensionController@edit_view');
 Route::post('/user/{id}/edit', 'extensionController@edit');
 
 Route::get('/test', function() {
+    /* Check connection with remote sqlsrv server */
+    //DB::connection('sqlsrv')->getPdo();
     return 'DONE';
 });
