@@ -57,7 +57,7 @@ class Kernel extends ConsoleKernel
 
             finished('PUSHING CALLS');
 
-        })->hourlyAt(30)->between('06:00', '20:00');
+        })->hourlyAt(30)->between('06:00', '20:00')->withoutOverlapping();
 
         $schedule->call(function() {
             ini_set('max_execution_time', 300);
@@ -67,7 +67,7 @@ class Kernel extends ConsoleKernel
 
             finished('UPDATING CDR TABLE');
 
-        })->hourlyAt(10)->between('06:00', '20:00');
+        })->hourlyAt(10)->between('06:00', '20:00')->withoutOverlapping();
         */
     }
 
