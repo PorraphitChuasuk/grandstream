@@ -258,7 +258,7 @@ class Grandstream {
             try {
                 /* Create at Remote Database */
                 \App\cdr::create($data);
-            } catch (PDOException $e) {
+            } catch (Exception $e) {
                 // Sometimes Can't Connect?
                 \App\local_cdr::where([
                     ['acctid', '=', $record['Acctid']],

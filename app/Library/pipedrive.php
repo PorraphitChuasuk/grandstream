@@ -209,9 +209,9 @@ class Pipedrive {
                     }
                 }
             }
+            \App\offset_config::set_offset('pipedrive', $country, $offset);
         }
         curl_close($ch);
-        \App\offset_config::set_offset('pipedrive', $country, $offset);
     }
 
 
