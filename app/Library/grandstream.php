@@ -191,17 +191,14 @@ class Grandstream {
                 $cdr = $val["cdr"];
                 /* Check if it has sub cdr */
                 if (array_key_exists("main_cdr", $val)) {
-                    $status = $this->_update_cdr_table($cdr, $val["main_cdr"], $log_file);
-                    if ($status == false) return;
+                    $this->_update_cdr_table($cdr, $val["main_cdr"], $log_file);
                     /* Looping through all sub cdr */
                     $cdr_count = count($val);
                     for ($i = 1;$i <= $cdr_count - 2;$i++) {
-                        $status = $this->_update_cdr_table($cdr, $val["sub_cdr_$i"], $log_file);
-                        if ($status == false) return;
+                    $this->_update_cdr_table($cdr, $val["sub_cdr_$i"], $log_file);
                     }
                 } else {
-                    $status = $this->_update_cdr_table($cdr, $val, $log_file);
-                    if ($status == false) return;
+                    $this->_update_cdr_table($cdr, $val, $log_file);
                 }
             }
             $offset += 1000;
@@ -212,6 +209,8 @@ class Grandstream {
     private function _update_cdr_table($cdr, $record, $log_file) {
         $data = [
             'cdr' => $cdr,
+            'acctid' => $record['Acctid'],
+            'session' => $record['session'],
             'accountcode' => $record['accountcode'],
             'src' => $record['src'],
             'dst' => $record['dst'],
@@ -244,32 +243,16 @@ class Grandstream {
             'dst_trunk_name' => $record['dst_trunk_name']
         ];
 
-        $state = \App\local_cdr::firstOrCreate(
-            [
-                'acctid' => $record['AcctId'],
-                'session' => $record['session']
-            ],
-                $data
-        );
+        $check = \App\local_cdr::where([
+            ['acctid', '=', $record['Acctid']],
+            ['session', '=', $record['session']]
+        ])->get();
 
-        if ($state->wasRecentlyCreated) {
-            $data['acctid'] = $record['AcctId'];
-            $data['session'] = $record['session'];
-            try {
-                /* Create at Remote Database */
-                \App\cdr::create($data);
-            } catch (Exception $e) {
-                // Sometimes Can't Connect?
-                \App\local_cdr::where([
-                    ['acctid', '=', $record['Acctid']],
-                    ['session', '=', $record['session']]
-                ])->delete();
-                log_to_file(get_error_log(), 'Remote SQL SERVER Database '.$e->getMessage());
-                return false;
-            }
+        if ($check == null) {
+            \App\cdr::create($data);
+            \App\local_cdr::create($data);
             log_to_file($log_file,
             'Added New Record -> acctid: '.$record['AcctId'].' session: '.$record['session']);
         }
-        return true;
     }
 }
