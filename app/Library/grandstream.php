@@ -209,7 +209,7 @@ class Grandstream {
     private function _update_cdr_table($cdr, $record, $log_file) {
         $data = [
             'cdr' => $cdr,
-            'acctid' => $record['Acctid'],
+            'acctid' => $record['AcctId'],
             'session' => $record['session'],
             'accountcode' => $record['accountcode'],
             'src' => $record['src'],
@@ -244,7 +244,7 @@ class Grandstream {
         ];
 
         $check = \App\local_cdr::where([
-            ['acctid', '=', $record['Acctid']],
+            ['acctid', '=', $record['AcctId']],
             ['session', '=', $record['session']]
         ])->get();
 
