@@ -246,7 +246,7 @@ class Grandstream {
         $check = \App\local_cdr::where([
             ['acctid', '=', $record['AcctId']],
             ['session', '=', $record['session']]
-        ])->get();
+        ])->first();
 
         if ($check == null) {
             \App\cdr::create($data);
