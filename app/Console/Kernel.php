@@ -26,6 +26,51 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->call(function() {
+            ini_set('max_execution_time', 300);
+
+            \App\deal::truncate();
+            \App\offset_config::set_offset('pipedrive', \App\Library\Pipedrive::THAILAND, 0);
+            \App\offset_config::set_offset('pipedrive', \App\Library\Pipedrive::SINGAPORE, 0);
+
+            $pipedrive = new \App\Library\Pipedrive;
+            $pipedrive->update_deal(\App\Library\Pipedrive::THAILAND);
+            $pipedrive->update_deal(\App\Library\Pipedrive::SINGAPORE);
+
+            finished('RESETTING DEAL TABLE');
+
+        })->dailyAt('01:00');
+
+
+        $schedule->call(function() {
+            ini_set('max_execution_time', 300);
+
+            $grandstream = new \App\Library\Grandstream;
+            $grandstream->add_recordfile();
+
+            $pipedrive = new \App\Library\Pipedrive;
+            $pipedrive->update_deal(\App\Library\Pipedrive::THAILAND);
+            $pipedrive->update_deal(\App\Library\Pipedrive::SINGAPORE);
+
+            $pipedrive->post_recording_file(\App\Library\Pipedrive::THAILAND);
+            $pipedrive->post_recording_file(\App\Library\Pipedrive::SINGAPORE);
+
+            finished('PUSHING CALLS');
+
+        })->hourlyAt(30)->between('06:00', '20:00')->name('push-calls')->withoutOverlapping();
+        
+
+        $schedule->call(function() {
+            ini_set('max_execution_time', 300);
+
+            $grandstream = new \App\Library\Grandstream;
+            $grandstream->update_cdr();
+
+            finished('UPDATING CDR TABLE');
+
+        })->hourlyAt(10)->between('06:00', '20:00')->name('update-cdr')->withoutOverlapping();
+
     }
 
     /**

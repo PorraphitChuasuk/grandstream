@@ -1,16 +1,23 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/user');
+});
+
+Route::get('/user', 'extensionController@index');
+
+Route::get('/user/add', 'extensionController@create');
+
+Route::post('/user/add', 'extensionController@store');
+
+Route::post('/user/{id}/delete', 'extensionController@delete');
+
+Route::get('/user/{id}/edit', 'extensionController@edit_view');
+
+Route::post('/user/{id}/edit', 'extensionController@edit');
+
+Route::get('/test', function() {
+    /* Check connection with remote sqlsrv server */
+    //DB::connection('sqlsrv')->getPdo();
+    return 'DONE';
 });
