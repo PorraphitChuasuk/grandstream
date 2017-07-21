@@ -1,4 +1,4 @@
-external_ip<?php
+<?php
 
 namespace App\Library;
 
