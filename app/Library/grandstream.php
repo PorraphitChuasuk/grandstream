@@ -1,4 +1,4 @@
-<?php
+external_ip<?php
 
 namespace App\Library;
 
@@ -17,7 +17,7 @@ class Grandstream {
     private $ring_group = '6'; // The first number of the extension of ring group
 
     public function add_recordfile() {
-        $url = 'https://'.$this->internal_ip.':'.$this->port.'/recapi?filedir='.$this->files_dir;
+        $url = 'https://'.$this->external_ip.':'.$this->port.'/recapi?filedir='.$this->files_dir;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -88,7 +88,7 @@ class Grandstream {
     }
 
     private function _get_operator($filename, $caller_nr) {
-        $url = 'https://'.$this->internal_ip.':'.$this->port.'/cdrapi?format=JSON&numrecords=1000&caller='.$caller_nr.'&offset=';
+        $url = 'https://'.$this->external_ip.':'.$this->port.'/cdrapi?format=JSON&numrecords=1000&caller='.$caller_nr.'&offset=';
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -162,7 +162,7 @@ class Grandstream {
     }
 
     public function update_cdr() {
-        $url = 'https://'.$this->internal_ip.':'.$this->port.'/cdrapi?format=JSON&numrecords=1000&offset=';
+        $url = 'https://'.$this->external_ip.':'.$this->port.'/cdrapi?format=JSON&numrecords=1000&offset=';
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
